@@ -394,6 +394,10 @@ index=endpoint host="ADDC-T2" EventCode=4624
 | 3 | This repo | AD attack simulation — RDP brute-force, Atomic Red Team, Sysmon detection |
 
 
+## Legal Disclaimer
+ 
+This project was conducted entirely within a self-owned, isolated VirtualBox lab environment. All machines, accounts, and credentials are fictitious and created solely for educational purposes. No external systems were targeted or accessed.
+
 ## References
 
 - [MITRE ATT&CK](https://attack.mitre.org/)
