@@ -1,4 +1,3 @@
-# ADDC-Attack-Detection-Simulation
 # Active Directory Attack Simulation & SOC Detection Lab
 
 > **Part 2 of the Active Directory Project series.**
