@@ -107,6 +107,10 @@ crackmapexec smb 192.168.10.5 -u mike_R -p S3cureP@ssword
 
 > **Real-world note:** All automated RDP brute-force tools (Crowbar, Hydra, ncrack) failed to establish a session. This is realistic — NLA (Network Level Authentication) and Kerberos time-sync requirements block most RDP brute-force tools in domain environments. The failures were themselves valuable: they generated **Event ID 4625** (failed logon) records in Splunk, which is exactly what a SOC analyst would investigate.
 
+<p>
+  <img src="addc-attack-detection/Splunk_4625.png" width="400"/>
+</p>
+
 **Root cause identified:** `gpupdate /force` was failing on `win11-T1` due to a clock skew between the endpoint and the domain controller. Kerberos requires clocks to be within 5 minutes of each other.
 
 **Time sync fix (on win11-T1, run as Administrator):**
@@ -131,6 +135,7 @@ gpupdate /force
 Once time sync was restored, `gpupdate /force` completed successfully and domain authentication functioned correctly.
 
 <p>
+  <img src="addc-attack-detection/Win11_TimeOffset(1).png" width="400"/>
   <img src="addc-attack-detection/Win11_TimeOffset.png" width="400"/>
 </p>
 
@@ -144,6 +149,9 @@ With the correct credentials confirmed, a manual RDP session was established fro
 xfreerdp /u:mike_R /p:S3cureP@ssword /v:192.168.10.5
 ```
 
+<p>
+  <img src="addc-attack-detection/Win11_TimeOffset(1).png" width="400"/>
+</p>
 This successfully opened a remote desktop session as `mike_R` on `win11-T1`, generating the key authentication event in Splunk.
 
 **Detection — Successful Logon (Event ID 4624):**
