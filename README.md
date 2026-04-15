@@ -3,6 +3,9 @@
 > **Part 2 of the Active Directory Project series.**
 > For environment setup (VirtualBox, Ubuntu Splunk, Windows Server 2022 DC, Sysmon, Universal Forwarder), see 👉 [ADDC-Soc-Simulator-lab (Part 1)](https://github.com/ericnam-png/ADDC-Soc-Simulator-lab)
 
+---
+
+## Summary
 This project simulates a realistic Active Directory attack chain — from RDP brute-force attempts through domain account targeting — and demonstrates how each stage is detected, investigated, and correlated in Splunk. Atomic Red Team is used to simulate additional MITRE ATT&CK techniques and validate detection coverage.
 
 ---
