@@ -336,13 +336,7 @@ Real issues encountered and resolved during this lab:
 Crowbar, Hydra, and ncrack all produced `freerdp: The connection failed to establish` errors when targeting `192.168.10.5`. This is expected behaviour — NLA (Network Level Authentication) requires Kerberos pre-authentication before the RDP session is established, which breaks most brute-force tool implementations. The lab correctly reflects this real-world constraint.
 
 **net user mike_R returning "user not found" on win11-T1:**
-`mike_R` is a domain account (`AD\mike_R`), not a local account. Running `net user mike_R` without the domain prefix searches only local accounts. To query domain accounts, use `net user mike_R /domain` from a domain-joined machine or query via ADUC on the DC.
-
-**Atomic Red Team T1136.001 tests failing on password complexity:**
-Some sub-tests use simple passwords like `password` or `T3stUser` that don't meet the domain's password complexity policy (minimum length, uppercase, symbol requirements enforced via GPO). This is expected — it demonstrates that the domain policy is working as intended.
-
-**invoke-atomictest not found after a new PowerShell session:**
-The `Invoke-AtomicTest` function is loaded into the current session only. If a new PowerShell window is opened, run `Import-Module "C:\AtomicRedTeam\invoke-atomicredteam\Invoke-AtomicRedTeam.psd1"` to reload the module before running tests.
+`mike_R` is a domain account (`AD\mike_R`), not a local account. Running `net user mike_R` without the domain prefix searches only local accounts. To query domain accounts, I had to use `net user mike_R /domain` from a domain-joined machine or query via ADUC on the DC.
 
 ---
 
@@ -387,7 +381,7 @@ index=endpoint host="ADDC-T2" EventCode=4624
 
 **On infrastructure:** Time synchronisation is not optional in Active Directory. A 5-minute clock skew breaks Kerberos, which breaks authentication, which breaks everything — Group Policy, domain joins, and tool-based attacks alike. This is a real operational issue that affects both attackers and defenders.
 
-**On detection engineering:** Atomic Red Team is a practical way to generate known-bad telemetry and validate that your SIEM is actually capturing what it should. Running T1136.001 and seeing Event IDs 4720 and 4726 appear in Splunk within seconds confirms the detection pipeline is working end-to-end.
+**On detection engineering:** Atomic Red Team is a practical way to generate known-bad telemetry and validate that my SIEM has been actually capturing what it should. Running T1136.001 and seeing Event IDs 4720 and 4726 appear in Splunk within seconds confirms the detection pipeline is working end-to-end.
 
 ---
 
@@ -400,13 +394,6 @@ index=endpoint host="ADDC-T2" EventCode=4624
 | 2 | [ADDC-Soc-Simulator-lab (Part 1)](https://github.com/ericnam-png/ADDC-Soc-Simulator-lab) | Active Directory environment setup — 4-VM lab, domain, Splunk forwarding |
 | 3 | This repo | AD attack simulation — RDP brute-force, Atomic Red Team, Sysmon detection |
 
----
-
-## Legal Disclaimer
-
-This project was conducted entirely within a self-owned, isolated VirtualBox lab environment. All machines, accounts, and credentials are fictitious and created solely for educational purposes. No external systems were targeted or accessed.
-
----
 
 ## References
 
