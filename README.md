@@ -107,10 +107,6 @@ crackmapexec smb 192.168.10.5 -u mike_R -p S3cureP@ssword
 
 > **Real-world note:** All automated RDP brute-force tools (Crowbar, Hydra, ncrack) failed to establish a session. This is realistic — NLA (Network Level Authentication) and Kerberos time-sync requirements block most RDP brute-force tools in domain environments. The failures were themselves valuable: they generated **Event ID 4625** (failed logon) records in Splunk, which is exactly what a SOC analyst would investigate.
 
-<p>
-  <img src="addc-attack-detection/Splunk_4625.png" width="400"/>
-</p>
-
 **Root cause identified:** `gpupdate /force` was failing on `win11-T1` due to a clock skew between the endpoint and the domain controller. Kerberos requires clocks to be within 5 minutes of each other.
 
 **Time sync fix (on win11-T1, run as Administrator):**
@@ -150,7 +146,7 @@ xfreerdp /u:mike_R /p:S3cureP@ssword /v:192.168.10.5
 ```
 
 <p>
-  <img src="addc-attack-detection/Win11_TimeOffset(1).png" width="400"/>
+  <img src="addc-attack-detection/Splunk_xfreerdp(1).png" width="400"/>
 </p>
 This successfully opened a remote desktop session as `mike_R` on `win11-T1`, generating the key authentication event in Splunk.
 
@@ -161,6 +157,11 @@ index=endpoint host="win11-T1" EventCode=4624
 - 134 total Event ID 4624 records captured across both `win11-T1` and `ADDC-T2`
 - Key fields visible: `Account_Name=mike_R`, `Account_Domain=AD`, `Source_Network_Address=192.168.10.7`, `Logon_Type=10` (RemoteInteractive)
 
+<p>
+  <img src="addc-attack-detection/Splunk_xfreerdp(2).png" width="400"/>
+  <img src="addc-attack-detection/Splunk_xfreerdp(3).png" width="400"/>
+</p>
+
 
 **Detection — Failed Logon Attempts (Event ID 4625):**
 ```spl
@@ -168,6 +169,10 @@ index=endpoint host="win11-T1" EventCode=4625
 ```
 - Multiple 4625 events captured from the brute-force tool runs
 - Useful for correlating failed → successful logon sequences
+
+<p>
+  <img src="addc-attack-detection/Splunk_4625.png" width="700"/>
+</p>
 
 
 **Splunk correlation query — brute-force pattern:**
@@ -196,7 +201,9 @@ Install-AtomicRedTeam -getAtomics
 # Confirm atomics folder
 # C:\AtomicRedTeam\atomics\ — 330 technique folders
 ```
-
+<p>
+  <img src="addc-attack-detection/Atomic_installation.png" width="400"/>
+</p>
 
 > **Note:** Windows Defender real-time protection was disabled and a `C:\` folder exclusion was added before installation to allow Atomic Red Team to operate without interference.
 
@@ -215,11 +222,18 @@ Invoke-AtomicTest T1136.001
 - Test 8 successfully created a new Windows admin user via `net localgroup`
 - Test 9 created `NewLocalUser`, added it to the `Administrators` group, then deleted it
 
+<p>
+  <img src="addc-attack-detection/Atomic_T1136.png" width="700"/>
+</p>
+
 
 **Splunk detection — Account Created (Event ID 4720):**
 ```spl
 index=endpoint NewLocalUser EventCode=4720
 ```
+<p>
+  <img src="addc-attack-detection/Atomic_T1136_Splunk.png" width="700"/>
+</p>
 Result: Captured `NewLocalUser` account creation — `Subject: ericn (WIN11-T1)`, `New Account: NewLocalUser (WIN11-T1)`
 
 
@@ -227,6 +241,9 @@ Result: Captured `NewLocalUser` account creation — `Subject: ericn (WIN11-T1)`
 ```spl
 index=endpoint NewLocalUser EventCode=4726
 ```
+<p>
+  <img src="addc-attack-detection/Atomic_T1136_Splunk(Ac_deleted).png" width="700"/>
+</p>
 Result: Confirmed account deletion by `ericn` — full audit trail of creation and cleanup visible in Splunk.
 
 
