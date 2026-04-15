@@ -23,6 +23,10 @@ This project simulates a realistic Active Directory attack chain — from RDP br
 - Sysmon + Splunk Universal Forwarder running on both `win11-T1` and `ADDC-T2`
 - Logs forwarded to Ubuntu Splunk server at `192.168.10.4:9997`, indexed under `endpoint`
 
+<p>
+  <img src="addc-attack-detection/ADDC_Project_OverView.png" width="400"/>
+  <img src="addc-attack-detection/Splunk_Hosts_Injested.png" width="400"/>
+</p>
 
 ---
 
@@ -32,6 +36,11 @@ This project simulates a realistic Active Directory attack chain — from RDP br
 |---|---|---|---|
 | Sales | Mike Rans | `mike_R` | Target account — intentionally weak password |
 | HR | Sorry Han | `verysorryhan` | Secondary domain user |
+
+<p>
+  <img src="addc-attack-detection/ADUC_Mike_RDPUser.png" width="400"/>
+  <img src="addc-attack-detection/ADUC_RDPUsers.png" width="400"/>
+</p>
 
 Both accounts were added to the `Remote Desktop Users` group on `win11-T1` to allow RDP access, simulating a realistic enterprise misconfiguration.
 
@@ -60,7 +69,10 @@ head -n 20 rockyou.txt > bfwords.txt
 #   S3cureP@ssword
 #   S3cureP2ssword1
 ```
-
+<p>
+  <img src="addc-attack-detection/Kali_Crowbar_Installation.png" width="400"/>
+  <img src="addc-attack-detection/Kali_Crowbar_Configuration.png" width="400"/>
+</p>
 
 ---
 
@@ -88,6 +100,10 @@ ncrack -vv -T 4 --user mike_R -P bfwords.txt rdp://192.168.10.5
 ```bash
 crackmapexec smb 192.168.10.5 -u mike_R -p S3cureP@ssword
 ```
+<p>
+  <img src="addc-attack-detection/Kali_Crowbar_trail.png" width="400"/>
+  <img src="addc-attack-detection/Kali_Hydra_trail.png" width="400"/>
+</p>
 
 > **Real-world note:** All automated RDP brute-force tools (Crowbar, Hydra, ncrack) failed to establish a session. This is realistic — NLA (Network Level Authentication) and Kerberos time-sync requirements block most RDP brute-force tools in domain environments. The failures were themselves valuable: they generated **Event ID 4625** (failed logon) records in Splunk, which is exactly what a SOC analyst would investigate.
 
@@ -114,6 +130,9 @@ gpupdate /force
 ```
 Once time sync was restored, `gpupdate /force` completed successfully and domain authentication functioned correctly.
 
+<p>
+  <img src="addc-attack-detection/Win11_TimeOffset.png" width="400"/>
+</p>
 
 ---
 
