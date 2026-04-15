@@ -256,6 +256,9 @@ Attempted to create a domain account via PowerShell.
 ```powershell
 Invoke-AtomicTest T1136.002
 ```
+<p>
+  <img src="addc-attack-detection/Atomic_T1136.002(Failed).png" width="700"/>
+</p>
 
 **Result:** All sub-tests returned `Access is denied (Exit code: 2)` — expected, since `ericn` is a local account without Domain Admin privileges. This is a realistic and intentional outcome: it demonstrates that privilege boundaries are correctly enforced and that escalation would be required in a real attack.
 
@@ -268,6 +271,9 @@ UAC bypass techniques were simulated using Atomic Red Team's T1548.002 test suit
 ```powershell
 Invoke-AtomicTest T1548.002
 ```
+<p>
+  <img src="addc-attack-detection/Atomic_T1548.002.png" width="700"/>
+</p>
 
 **Splunk detection — Sysmon Registry Event (Event ID 13):**
 ```spl
@@ -285,7 +291,10 @@ Result: 13 events captured. Sysmon Event ID 1 showed:
 - `ParentImage: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
 - `CommandLine` contained the registry key manipulation targeting `mscfile\shell\open\command`
 
-
+<p>
+  <img src="addc-attack-detection/Atomic_T1548_Splunk.png" width="400"/>
+  <img src="addc-attack-detection/Atomic_T1548_Splunk(1).png" width="400"/>
+</p>
 This is the exact telemetry a SOC analyst would hunt for when investigating a UAC bypass attempt.
 
 ---
